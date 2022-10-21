@@ -1,41 +1,83 @@
 const mysql = require('mysql2');
 const con = require('./db/connection');
 const cTable = require('console.table');
+const inquirer = require('inquirer');
 
-/*
-
-con.query('SELECT * FROM departments', (err, rows) => {
-    if(err) throw err;
-    console.table('View all departments', rows);
-});
-
-con.query('SELECT roles.id, roles.title, roles.salary, departments.department_name AS department FROM roles LEFT JOIN departments ON roles.department_id = departments.id', (err, rows) => {
-    if(err) throw err;
-    console.table('View all roles', rows);
-});
-
-
-*/
-
-
-
-
-
-
-
-con.query("SELECT e.id, e.first_name, e.last_name, roles.title, roles.salary, departments.department_name AS department, IFNULL(CONCAT(m.first_name, ' ', m.last_name), 'null') AS 'manager' FROM(((employees e LEFT JOIN roles ON e.role_id = roles.id) LEFT JOIN departments ON roles.department_id = departments.id) LEFT JOIN employees m ON e.manager_id = m.id) ORDER BY e.id", 
-    (err, rows) => {
-        if(err) throw err;
-        console.table('View all employees', rows);
-});
-
-
-
-
-
-
+const {getAllDeps, getAllRoles, getAllEmployees} = require('./utils/mysqlQueries')
 
 con.connect(err => {
     if(err) throw err;
-    console.log(`connected to assignment12 database!`);
+    //console.log(`connected to assignment12 database!`);
 });
+
+
+
+const actionPrompt = {
+    type: 'list',
+    name: 'action',
+    message: 'Where would you like to start?',
+    choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role']
+};
+
+const nextPrompt = {
+    type: 'list',
+    name: 'action',
+    message: 'What would you like to do next?',
+    choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role']
+}
+
+
+
+function loadHogwartsData() {
+    console.log('Welcome to Hogwarts, Mr. Fudge!');
+    viewAll();
+}
+
+
+function viewAll() {
+    inquirer.prompt(actionPrompt).then((answers) => {
+       
+        if(answers.action === 'View all departments') {
+            
+            getAllDeps();
+            
+
+        } else if(answers.action === 'View all roles') {
+            getAllRoles();
+            startOver();
+
+        } else if(answers.action === 'View all employees') {
+            getAllEmployees();
+            startOver();
+        } else {
+            makeChanges();
+        }
+    });
+};
+
+
+function makeChanges() {
+    inquirer.prompt(actionPrompt).then((answers) => {
+        if(answers.firstAction === 'Add a department') {
+
+        } else if(answers.firstAction === 'Add a role') {
+
+        } else if(answers.firstAction === 'Add an employee') {
+
+        } else if(answers.firstAction === 'Update an employee role') {
+
+        } else {
+            return;
+        }
+    })
+}
+
+
+function startOver() {
+    inquirer.prompt(nextPrompt).then((answers) => {
+        viewAll(answers);
+
+    })
+}
+
+loadHogwartsData();
