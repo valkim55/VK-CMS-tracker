@@ -70,7 +70,7 @@ function makeChanges() {
                     validate: newDepInput => {
                         if(newDepInput) {
                             addDepartment(newDepInput);
-                            depsArray.push(newDep);
+                            depsArray.push(newDepInput);
                             //console.log(depsArray);
                             return true;
                         } else {
@@ -183,7 +183,7 @@ function makeChanges() {
     });
 };
 
-// extra features such as, find by manager, find by department, total expenses 
+// extra features  
 function otherActions() {
     return inquirer.prompt([    
         {
