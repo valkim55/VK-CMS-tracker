@@ -27,29 +27,15 @@ CREATE TABLE employees (
 
 
 /*
-SELECT e.id, e.first_name, e.last_name, roles.title, roles.salary, departments.department_name AS department, IFNULL(CONCAT(m.first_name, ' ', m.last_name), 'null') AS 'manager'
-    -> FROM(((employees e
-    -> LEFT JOIN roles ON e.role_id = roles.id)
-    -> LEFT JOIN departments ON roles.department_id = departments.id)
-    -> LEFT JOIN employees m ON e.manager_id = m.id)
-    -> ORDER BY e.id;
-*/
 
-/* THIS DOESN'T WORK
-INSERT INTO employees 
-SET first_name = 'DJ', last_name = 'Peng', role_id = (SELECT id FROM roles WHERE title = 'Auror'), manager_id = (SELECT id FROM employees WHERE CONCAT(first_name, ' ', last_name) = 'Alastor Moody')
-/*
+SELECT e.id, CONCAT_WS(' ', e.first_name, e.last_name) AS 'employee_name', roles.title, roles.salary, IFNULL(CONCAT(m.first_name, ' ', m.last_name), 'null') AS 'manager'
+FROM (((employees e 
+LEFT JOIN roles ON e.role_id = roles.id)
+LEFT JOIN employees m ON e.manager_id = m.id)
+LEFT JOIN departments ON roles.department_id = departments.id) 
+WHERE department_name = 'Transfiguration'; 
 
-/* THIS DOESN'T WORK
-INSERT INTO employees 
-SET first_name = 'DJ', last_name = 'Peng', role_id = (SELECT id FROM roles WHERE title = 'Auror'), manager_id = (SELECT id WHERE CONCAT(first_name, ' ', last_name) as 'Alastor Moody')
-*/
+ SELECT SUM(salary) AS 'Total employee compensation', departments.department_name FROM roles LEFT JOIN departments ON department_name = 'Care of Magical Creatures' WHERE roles.department_id = departments.id;
 
-/* THIS WORKS BUT MANAGER ID NULL
-INSERT INTO employees 
-SET first_name = 'DJ', last_name = 'Peng', role_id = (SELECT id FROM roles WHERE title = 'Potions Master'), manager_id = (SELECT employees.id WHERE CONCAT(first_name, ' ', last_name) = 'Albus Dumbledore')
+
 */
-/*
-  INSERT INTO employees SET first_name = 'poogeon', last_name = 'poopsypie', role_id = (SELECT id FROM roles WHERE title = 'DA Teacher'),
-    -> manager_id = (SELECT employees.id WHERE employees.first_name = 'Rolanda' AND employees.last_name = 'Hooch');
-    */

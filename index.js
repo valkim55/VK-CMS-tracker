@@ -6,11 +6,11 @@ const inquirer = require('inquirer');
 // import the query functions
 const { getAllDeps, getAllRoles, getAllEmployees } = require('./utils/viewTables');
 const { addDepartment, addRole, addEmployee } = require('./utils/addToTables');
-const { findByDepartment, findByManager, viewCompByDep } = require('./utils/sortTables');
+const { findByDepartment, viewCompByDep, deleteRole } = require('./utils/sortTables');
 
 // create departments, roles and employee arrays for 2 reasons: 
 // 1 - so user can dynamically access newly added rows as well and, 2 - to sort which roles could be added to and which employees can be assigned as managers
-let depsArray = [];
+let depsArray = ['Transfiguration', 'Care of Magical Creatures', 'Divination', 'Potions', 'Defence against the Dark Arts', 'Quidditch Team', 'Order Of Phoenix', 'Office of Headmaster'];
 let rolesArray = ['Transfiguration Teacher', 'Gamekeeper', 'Magizoologist', 'Divination Teacher', 'Potions Master', 'DA Teacher', 'Quidditch Referee', 'Gryffindor Quidditch Captain', 
                     'Gryffindor Quidditch Chaser', 'Ravenclaw Quidditch Seeker', 'OOP Member', 'Auror'];
 let empArray =  ['Albus Dumbledore', 'Newt Scamander', 'Rolanda Hooch', 'Alastor Moody']; 
@@ -19,6 +19,7 @@ let empArray =  ['Albus Dumbledore', 'Newt Scamander', 'Rolanda Hooch', 'Alastor
 // this is where the application starts running 
 //this part is designated to display data (SELECT * FROM ... ), prompts for the queries that meant to alter the tables were separated into makeChanges() function
 const firstPrompt = () => {
+    console.log(`Welcome to Hogwarts!`)
     return inquirer.prompt([    
         {
             type: 'list',
@@ -56,7 +57,7 @@ function makeChanges() {
             type: 'list',
             name: 'action',
             message: 'What changes would you like to make?',
-            choices: ['Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'More filters', 'Exit']
+            choices: ['Add a department', 'Add a role', 'Add an employee', 'More actions']
         }   
     ]).then((answers) => {
         if(answers.action === 'Add a department') {
@@ -174,7 +175,7 @@ function makeChanges() {
                 return addEmployee(answers);
             }).then(() => firstPrompt());
             
-        } else if(answers.action === 'More filters') {
+        } else if(answers.action === 'More actions') {
             return otherActions();
         } else {
             return;
@@ -190,25 +191,47 @@ function otherActions() {
             name: 'chooseNext',
             message: 'What else would you like to do?',
             choices: ['Filter by department', 'Total compensation by department', 'Delete a role', 'Exit']
-        },
-        {
-
-        }   
+        }
     ]).then((answers) => {
         if(answers.chooseNext === 'Filter by department') {
-            return;
-    
+            return inquirer.prompt([    
+                {
+                    type: 'list',
+                    name: 'chooseDep',
+                    message: 'Please select a department to display: ',
+                    choices: depsArray
+                }
+            ]).then((answers) => {
+                return findByDepartment(answers);
+            }).then(() => firstPrompt());    
         
         } else if(answers.chooseNext === 'Total compensation by department') {
-            return;
-        
-        
+            return inquirer.prompt([    
+                {
+                    type: 'list',
+                    name: 'chooseComp',
+                    message: 'Please select a department to display total budget expenses for compensation: ',
+                    choices: depsArray
+                }
+            ]).then((answers) => {
+                return viewCompByDep(answers);
+            }).then(() => firstPrompt());        
 
         } else if(answers.chooseNext === 'Delete a role') {
-            
+            return inquirer.prompt([    
+                {
+                    type: 'list',
+                    name: 'roleDelete',
+                    message: 'Please select a role to delete: ',
+                    choices: rolesArray
+                }
+            ]).then((answers) => {
+                return deleteRole(answers);
+            }).then(() => getAllRoles())
+            .then(() => firstPrompt()); 
         
-        } else {
-            return;
+        } else if(answers.chooseNext === 'Exit') {
+            return console.log(`Thank you for visiting!`);
         }
     });
 };
