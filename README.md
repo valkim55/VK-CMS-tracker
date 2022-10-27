@@ -28,7 +28,8 @@ _Since this is a first production version of HCMS, the developer is opened to an
 
 > ### **Sample**📌
 Below you can find a screenshot of an example request to a database, as well the link to [video](https://drive.google.com/file/d/1Rh7TNWR-JFzyQkt1LF_hbKjQV1LpFE3z/view) demonstration <br>
-<img src='./img/scr1'>
+<img src='./src/scr1.png' width='500'> <br>
+<img src='./src/scr2.png' width='400'>
 
 <br/><br/>
 
